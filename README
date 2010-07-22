@@ -1,0 +1,62 @@
+wkhtmltopdf-py
+==============
+
+This is a wrapper library around the wkhtmltopdf binary.
+For more information about wkhtmltopdf please visit http://code.google.com/p/wkhtmltopdf/.
+
+Basic usage
+===========
+
+>>> from wkhtmltopdfpy import WebkitHTML
+
+Create a WebkitHTML element
+
+>>> wk = WebkitHTML()
+
+This will use the bundled static version of wkhtmltopdf.
+Please note that this only works on Linux, Windows and Mac OS X (intel)
+
+If you are using another system, or if you want to use another binary,
+you can specify your own.
+
+>>> wk = WebkitHTML('/usr/bin/wkhtmltopdf')
+
+You can then specify either a text as ``content`
+>>> content = []
+>>> content.append(u"This is my first page")
+
+or you can specify an existing path
+>>> content.append("./README")
+
+a third way is to specify a url
+>>> content.append("http://google.com")
+
+In a similar way you can provide sources for ``header`` and ``footer``
+with the difference that they don't take a list, but only a singe element
+each.
+
+>>> header = "header.html"
+>>> footer = u"This is my Footer"
+
+You can specify special configuration parameters for wkthmltopdf using
+the ``args`` argument. Lets specify the margin of the page.
+
+>>> args = ["--margin-bottom", "2.5cm", "--margin-top", "2.5cm"]
+
+Now we can now render to a file called example.pdf.
+
+>>> wk.render("example.pdf", content=content, header=header, footer=header, args=args)
+
+Alternatively you can get the PDF content as the return value by providing ``None`` as
+``output_file``
+
+>>> pdf = wk.render(None, content=content, header=header, footer=header, args=args)
+
+You can then send it over network or write it to a file yourself.
+
+>>> f = open('myexample.pdf', 'wb')
+>>> f.write(pdf)
+>>> f.close()
+
+Note: If you want to write the PDF directly to a file, the first version is preferable
+as it doesn't involve temporary files and storing the whole PDF in memory.
