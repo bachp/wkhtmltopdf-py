@@ -144,12 +144,15 @@ class WebkitHTML(object):
         if header:
             url = urlparse(header)
             if url.scheme:
+                # Header is an url, append it as is
                 arguments.append("--header-html")
                 arguments.append(header)
-            elif os.path.isfile(footer):
+            elif os.path.isfile(header.encode("utf8")):
+                # Header is a file, append it as is, we use utf8 filenames
                 arguments.append("--header-html")
-                arguments.append(header)
+                arguments.append(header.encode("utf8"))
             else:
+                # Header is a string, write it to a temporary file and use this file as input
                 header_file = tempfile.NamedTemporaryFile(mode='w+', prefix="header_", suffix=".html")
                 header_file.write(header.encode("utf8"))
                 header_file.flush()
@@ -159,12 +162,15 @@ class WebkitHTML(object):
         if footer:
             url = urlparse(footer)
             if url.scheme:
+                # Footer is an url, append it as is
                 arguments.append("--footer-html")
                 arguments.append(footer)
-            elif os.path.isfile(footer):
+            elif os.path.isfile(footer.encode("utf8")):
+                # Footer is a file, append it as is, we use utf8 filenames
                 arguments.append("--footer-html")
-                arguments.append(footer)
+                arguments.append(footer.encode("utf8"))
             else:
+                # Footer is a string, write it to a temporary file and use this file as input
                 footer_file = tempfile.NamedTemporaryFile(mode='w+', prefix="footer_", suffix=".html")
                 footer_file.write(footer.encode("utf8"))
                 footer_file.flush()
