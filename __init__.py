@@ -183,10 +183,13 @@ class WebkitHTML(object):
         for content_item in content:
             url = urlparse(content_item)
             if url.scheme:
+                # Content is an url, append it as is
                 arguments.append(content_item)
-            elif os.path.isfile(content_item):
-                arguments.append(content_item)
+            elif os.path.isfile(content_item.encode("utf8")):
+                # Content is a file, append it as is, we use utf8 filenames
+                arguments.append(content_item.encode("utf8"))
             else:
+                # Content is a string, write it to a temporary file and use this file as input
                 content_file = tempfile.NamedTemporaryFile(mode='w+', prefix="content_", suffix=".html")
                 content_file.write(content_item.encode("utf8"))
                 content_file.flush()
@@ -194,13 +197,12 @@ class WebkitHTML(object):
                 arguments.append(content_file.name)
         
         if not output_file:
+            # If no output filename is given create a temporary one
             output_file_temp = tempfile.NamedTemporaryFile(mode='wb', prefix="output_", suffix=".pdf", delete=False)
             output_file_temp.close()
             output_file = output_file_temp.name
         
         arguments.append(output_file)
-        
-        print arguments
         
         subprocess.call(arguments)
         
